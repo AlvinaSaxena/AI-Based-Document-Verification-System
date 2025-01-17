@@ -1,0 +1,9 @@
+path: 'E:\Infosys Training\Detection Model\data.yaml'
+train: 'E:\Infosys Training\Detection Model\Detection Dataset\dataset\dataset\images\train'
+val: 'E:\Infosys Training\Detection Model\Detection Dataset\dataset\dataset\images\val'
+
+
+names:
+  0: name
+  1: uid
+  2: address
