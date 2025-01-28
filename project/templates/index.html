@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Fraud Management System</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('./static/Galaxy.webp') no-repeat center top;
+            background-size: 150% auto;
+            color: #ffffff;
+            overflow-x: hidden;
+            transition: background-image 1s ease-in-out; 
+            animation: moveBackground 200s infinite alternate;
+        }
+
+        /* Keyframes for background movement */
+        @keyframes moveBackground {
+            0% {
+                background-position: center 0%;
+            }
+            50% {
+                background-position: center 40%;
+            }
+            100% {
+                background-position: center 0%;
+            }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="file"] {
+            margin-top: 5px;
+        }
+
+        button {
+            background: #00d4ff;
+            color: #121212;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #00b3e0;
+        }
+
+        table {
+            width: 80%;
+            max-width: 1000px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            table-layout: auto;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        table, th, td {
+            border: 1px solid #444;
+        }
+
+        th {
+            background-color: #00d4ff;
+            color: #121212;
+        }
+
+        .download-btn {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: #1e1e1e;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 3;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+        .navbar ul li {
+            margin: 0 20px;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #00d4ff;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .navbar ul li a:hover {
+            color: #00b3e0;
+        }
+
+        #dashboardSection {
+            display: none;
+            max-width: 1000px;
+            margin: 100px auto;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <ul>
+            <li><a href="/upload/" id="uploadLink">Upload Files</a></li>
+            <li><a href="/dashboard/" id="dashboardLink">Dashboard</a></li>
+        </ul>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="container" id="upload">
+        <h1>AI-Based Fraud Management System For UID Aadhar</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="zipfile">Upload ZIP File:</label>
+            <input type="file" id="zipfile" name="zipfile" accept=".zip" required><br><br>
+
+            <label for="excelfile">Upload Excel File:</label>
+            <input type="file" id="excelfile" name="excelfile" accept=".xlsx" required><br><br>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <table id="resultsTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Sr. No</th>
+                    <th>UID Match Score</th>
+                    <th>Name Match Score</th>
+                    <th>Final Address Match Score</th>
+                    <th>Final Remarks</th>
+                    <th>Document Type</th>
+                    <th>Accepted/Rejected</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <div class="download-btn">
+            <button id="downloadBtn" style="display: none;">Download Results</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection">
+        <h2>Dashboard Overview</h2>
+        <p>Here, you can display statistics or insights derived from the processed data.</p>
+    </div>
+
+    <script>
+        // Handle navigation between sections
+        document.getElementById('dashboardLink').addEventListener('click', function (e) {
+            e.preventDefault();
+            window.location.href = '/dashboard';
+            document.getElementById('upload').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+        });
+
+        document.getElementById('uploadLink').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('upload').style.display = 'block';
+            document.getElementById('dashboardSection').style.display = 'none';
+        });
+
+        // Handle form submission and display results
+        document.getElementById('uploadForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('zipfile', document.getElementById('zipfile').files[0]);
+            formData.append('excelfile', document.getElementById('excelfile').files[0]);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    alert('Error: ' + response.statusText);
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+
+                displayResults(data.results);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing the files.');
+            }
+        });
+
+        function displayResults(results) {
+            const table = document.getElementById('resultsTable');
+            const tbody = table.querySelector('tbody');
+
+            tbody.innerHTML = '';
+            results.forEach((result, index) => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${result.SrNo}</td>
+                    <td>${result["UID Match Score"]}</td>
+                    <td>${result["Name Match Score"]}</td>
+                    <td>${result["Final Address Match Score"]}</td>
+                    <td>${result["Final Remarks"]}</td>
+                    <td>${result["Document Type"]}</td>
+                    <td>${result["Accepted/Rejected"]}</td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            table.style.display = 'table';
+
+            document.getElementById('downloadBtn').style.display = 'block';
+
+            document.getElementById('downloadBtn').addEventListener('click', function () {
+                let csvContent = "Sr No,Matching Score,Image Name,Document Type,Remark\n";
+                results.forEach(result => {
+                    csvContent += `${result.sr_no},${result.matching_score},${result.image_name},${result.document_type},${result.remark}\n`;
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = "results.csv";
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
