@@ -1,4 +1,4 @@
-# 🛡️ AI-Based Fraud Management System
+# 🛡️ AI-Based Document Verification System
 
 An AI-driven system developed with Python and deep learning models to detect fraudulent activities through text and image analysis, leveraging OCR, classification models, and YOLO object detection.
 
@@ -145,7 +145,7 @@ This project is licensed under the **MIT License**.
 
 ## 📧 Contact
 - **GitHub**: [@AlvinaSaxena](https://github.com/AlvinaSaxena)
-- **Project Link**: [AI-Based Fraud Management System](https://github.com/AlvinaSaxena/AI-Based-Fraud-Management-System)
+- **Project Link**: [AI-Based Document Verification System](https://github.com/AlvinaSaxena/AI-Based-Document-Verification-System)
 
 ---
 
